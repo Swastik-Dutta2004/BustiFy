@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Bus" ADD COLUMN     "totalSeats" INTEGER NOT NULL DEFAULT 40;

@@ -10,7 +10,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 
@@ -31,6 +30,7 @@ model Bus{
   departureTime   String
   arrivalTime     String
   price           Int
+  totalSeats      Int @default(40)
   bookings        Booking[]
 }
 

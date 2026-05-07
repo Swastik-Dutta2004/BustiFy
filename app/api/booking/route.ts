@@ -12,10 +12,6 @@ export async function POST(req: Request) {
 
         const token = authHeader.split(" ")[1];
 
-        console.log("TOKEN PARTS:", authHeader.split(" "));
-        console.log("TOKEN:", JSON.stringify(token));
-        console.log("STARTS WITH eyJ?", token?.startsWith("eyJ"));
-
         const decode = jwt.verify(token, process.env.JWT_SECRET!) as {
             userId: number;
             email: string;
@@ -31,15 +27,29 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "BusID and SeatID is required" })
         }
 
-        const exixtingBooking = await prisma.booking.findFirst({
+        const bus = await prisma.bus.findUnique({
+            where:{
+                id: body.busId
+            }
+        })
+
+        if (!bus) {
+            return NextResponse.json({error: "Bus not found"})
+        }
+
+        if (body.seatId < 1 || body.seatId > bus.totalSeats) {
+            return NextResponse.json({error: "Invalid seat number"})
+        }
+
+        const existingBooking = await prisma.booking.findFirst({
             where: {
                 busId: body.busId,
                 seatId: body.seatId
             }
         })
 
-        if (exixtingBooking) {
-            return NextResponse.json({ error: "Seat is alreay booked" })
+        if (existingBooking) {
+            return NextResponse.json({ error: "Seat is already booked" })
         }
 
         const booking = await prisma.booking.create({
