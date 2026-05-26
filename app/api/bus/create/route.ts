@@ -28,11 +28,12 @@ export async function POST(req: Request) {
                 arrivalTime: body.arrivalTime,
                 price: body.price,
                 totalSeats: body.totalSeats
+                
             }
         })
 
         return NextResponse.json({
-            message: "Bus craeted",
+            message: "Bus created",
             bus
         })
 

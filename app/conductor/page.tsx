@@ -76,36 +76,36 @@ export default function ConductorPage() {
             </header>
 
             <main className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-                
+
                 {/* --- LEFT: ADD BUS FORM --- */}
                 <div className="lg:col-span-4">
                     <div className="bg-card p-6 rounded-3xl border border-border shadow-xl sticky top-8">
                         <h2 className="text-lg font-black uppercase tracking-tight mb-6 flex items-center gap-2">
                             <Plus className="text-primary" size={20} /> Register New Bus
                         </h2>
-                        
+
                         <div className="space-y-4">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-bold uppercase text-muted-foreground ml-2">Bus Name</label>
-                                <input 
+                                <input
                                     className="w-full bg-secondary/50 border-none rounded-xl px-4 py-3 text-sm font-bold focus:ring-2 ring-primary outline-none transition-all"
-                                    placeholder="e.g. Royal Cruiser" value={name} onChange={(e) => setName(e.target.value)} 
+                                    placeholder="e.g. Royal Cruiser" value={name} onChange={(e) => setName(e.target.value)}
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-bold uppercase text-muted-foreground ml-2">From</label>
-                                    <input 
+                                    <input
                                         className="w-full bg-secondary/50 border-none rounded-xl px-4 py-3 text-sm font-bold outline-none"
-                                        placeholder="Origin" value={from} onChange={(e) => setFrom(e.target.value)} 
+                                        placeholder="Origin" value={from} onChange={(e) => setFrom(e.target.value)}
                                     />
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-bold uppercase text-muted-foreground ml-2">To</label>
-                                    <input 
+                                    <input
                                         className="w-full bg-secondary/50 border-none rounded-xl px-4 py-3 text-sm font-bold outline-none"
-                                        placeholder="Destination" value={to} onChange={(e) => setTo(e.target.value)} 
+                                        placeholder="Destination" value={to} onChange={(e) => setTo(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -113,21 +113,21 @@ export default function ConductorPage() {
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-bold uppercase text-muted-foreground ml-2">Price (₹)</label>
-                                    <input 
+                                    <input
                                         type="number" className="w-full bg-secondary/50 border-none rounded-xl px-4 py-3 text-sm font-bold outline-none"
-                                        placeholder="0.00" value={price} onChange={(e) => setPrice(e.target.value)} 
+                                        placeholder="0.00" value={price} onChange={(e) => setPrice(e.target.value)}
                                     />
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-bold uppercase text-muted-foreground ml-2">Total Seats</label>
-                                    <input 
+                                    <input
                                         type="number" className="w-full bg-secondary/50 border-none rounded-xl px-4 py-3 text-sm font-bold outline-none"
-                                        placeholder="40" value={seats} onChange={(e) => setSeats(e.target.value)} 
+                                        placeholder="40" value={seats} onChange={(e) => setSeats(e.target.value)}
                                     />
                                 </div>
                             </div>
 
-                            <button 
+                            <button
                                 onClick={handleAddBus}
                                 className="w-full bg-primary text-primary-foreground font-black py-4 rounded-2xl mt-4 hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20 uppercase tracking-tighter"
                             >
@@ -172,7 +172,7 @@ export default function ConductorPage() {
                                             <p className="text-lg font-black text-foreground leading-none">₹{bus.price}</p>
                                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Base Fare</p>
                                         </div>
-                                        <button 
+                                        <button
                                             onClick={() => handleDelete(bus.id)}
                                             className="p-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all"
                                         >

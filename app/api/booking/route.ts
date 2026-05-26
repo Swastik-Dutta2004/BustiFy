@@ -17,10 +17,6 @@ export async function POST(req: Request) {
             email: string;
         }
 
-        console.log("AUTH HEADER:", authHeader);
-        console.log("TOKEN:", token);
-        console.log("TOKEN LENGTH:", token?.length);
-
         const body = await req.json();
 
         if (!body.busId || !body.seatId) {
@@ -56,7 +52,7 @@ export async function POST(req: Request) {
             data: {
                 userId: decode.userId,
                 seatId: body.seatId,
-                busId: body.busId
+                busId:  body.busId
             }
         })
 
