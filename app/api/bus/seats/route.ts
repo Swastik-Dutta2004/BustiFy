@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req:NextRequest) {
     try {
         
-        const busId = Number(req.nextUrl.searchParams.get("busId"))
+        const busId = Number(req.nextUrl.searchParams.get("busId")) 
 
         if (!busId) {
             return NextResponse.json(
