@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import  Jwt, { JsonWebTokenError }  from "jsonwebtoken";
+import  jwt, { JsonWebTokenError }  from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req:NextRequest) {
@@ -15,9 +15,9 @@ export async function GET(req:NextRequest) {
 
         const token = authHeader.split(" ")[1]
 
-        const decode = Jwt.verify(
+        const decode = jwt.verify(
             token,
-            process.env.JWT_SECRET!
+            process.env.jWT_SECRET!
         ) as {
             userId: number;
             email: string;

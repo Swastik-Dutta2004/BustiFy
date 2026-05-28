@@ -15,7 +15,9 @@ export async function POST(req: Request) {
 
     //check existing user
     const existingUser = await prisma.user.findUnique({
-      where: { email: body.email }
+      where: {
+        email: body.email
+      }
     })
     if (existingUser) {
       return NextResponse.json({ error: "User already exists." })
@@ -41,7 +43,7 @@ export async function POST(req: Request) {
       email: createUser.email
     });
 
-    
+
   } catch (error: any) {
     if (error.code === "P2002") {
       return NextResponse.json({ error: "Email already exists." })

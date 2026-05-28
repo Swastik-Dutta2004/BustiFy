@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Jwt, { JsonWebTokenError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
     
 export async function DELETE(req:NextRequest, context: { params: Promise<{ id: string }> }) {
@@ -16,9 +16,9 @@ export async function DELETE(req:NextRequest, context: { params: Promise<{ id: s
 
         const token = authHeader.split(" ")[1]
 
-        const decode = Jwt.verify(
+        const decode = jwt.verify(
             token,
-            process.env.JWT_SECRET!
+            process.env.jWT_SECRET!
         ) as {
             userId: string,
             email: string
@@ -59,7 +59,7 @@ export async function DELETE(req:NextRequest, context: { params: Promise<{ id: s
         })
 
     } catch (error) {
-        if (error instanceof Jwt.JsonWebTokenError) {
+        if (error instanceof jwt.JsonWebTokenError) {
             return NextResponse.json(
                 {error: "Invail token"},
                 {status:401}

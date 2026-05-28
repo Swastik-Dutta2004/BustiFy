@@ -48,11 +48,16 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Seat is already booked" })
         }
 
+        const pnr = "BUS" + Math.floor(
+            100000 + Math.random() * 900000
+        )
+
         const booking = await prisma.booking.create({
             data: {
                 userId: decode.userId,
                 seatId: body.seatId,
-                busId:  body.busId
+                busId:  body.busId,
+                pnr: pnr
             }
         })
 
