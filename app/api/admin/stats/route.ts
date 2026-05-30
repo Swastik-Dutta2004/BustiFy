@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt, { JsonWebTokenError } from 'jsonwebtoken'
 import { prisma } from "@/lib/prisma";
 
-export async function GET(req:NextRequest) {
+export async function GET(req: NextRequest) {
     try {
         const authHeader = req.headers.get("authorization")
 
         if (!authHeader) {
             return NextResponse.json(
-                {error: "No token has provided."},
-                {status: 401}
+                { error: "No token has provided." },
+                { status: 401 }
             )
         }
 
@@ -26,31 +26,34 @@ export async function GET(req:NextRequest) {
 
         if (decode.role !== "admin") {
             return NextResponse.json(
-                {error: "Access denied, Only admin."},
-                {status: 403}
+                { error: "Access denied, Only admin." },
+                { status: 403 }
             )
         }
 
-        const totalUser = await prisma.user.count()
-        const totalBus = await prisma.bus.count()
-        const totalBooking = await prisma.booking.count()
+        const [totalUser, totalBus, totalBooking] =
+            await Promise.all([
+                prisma.user.count(),
+                prisma.bus.count(),
+                prisma.booking.count()
+            ]);
 
         return NextResponse.json({
-            totalBooking, 
-            totalBus, 
+            totalBooking,
+            totalBus,
             totalUser
         })
 
     } catch (error) {
         if (error instanceof JsonWebTokenError) {
             return NextResponse.json(
-                {error: "Invaild token."},
-                {status: 401}
+                { error: "Invaild token." },
+                { status: 401 }
             )
         }
         return NextResponse.json(
-            {error: "Somethink went wrong."},
-            {status: 500}
+            { error: "Somethink went wrong." },
+            { status: 500 }
         )
     }
 }
