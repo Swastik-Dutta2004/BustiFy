@@ -1,14 +1,15 @@
+import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
-import jwt, { JsonWebTokenError } from 'jsonwebtoken'
+import jwt, { JsonWebTokenError } from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(req:NextRequest) {
+export async function  GET(req:NextRequest) {
     try {
         const authHeader = req.headers.get("authorization")
 
         if (!authHeader) {
             return NextResponse.json(
-                {error: "Token not provided"},
+                {error: "Token not provided."},
                 {status: 401}
             )
         }
@@ -19,43 +20,57 @@ export async function GET(req:NextRequest) {
             token,
             process.env.JWT_SECRET!
         ) as {
-            userId : string,
+            userId : number,
             email : string,
             role : string
         }
 
         if (decode.role !== "admin") {
             return NextResponse.json(
-                {error: "Access denied, Only admin are allowed"},
+                {error: "Access denied, Only admin."},
                 {status: 403}
             )
         }
 
-        const buses = await prisma.bus.findMany({
+        const bookings = await prisma.booking.findMany({
             include: {
-                bookings: {
+                user: {
                     select: {
                         id: true,
-                        userId: true,
-                        pnr: true
+                        name: true,
+                        email: true
+                    }
+                },
+
+                bus: {
+                    select: {
+                        id:true,
+                        busName: true,
+                        fromCity: true,
+                        toCity: true,
+                        departureTime: true,
+                        arrivalTime: true,
+                        price: true
                     }
                 }
             }
         })
 
-        return NextResponse.json(
-            buses
-        )
+        return NextResponse.json({
+            bookings
+        })
+        
     } catch (error) {
+        
         if (error instanceof JsonWebTokenError) {
             return NextResponse.json(
-                {error: "Invalid token"},
+                {error: "Invalid token. "},
                 {status: 401}
             )
         }
-
+        
         return NextResponse.json(
-            {error: "Something went wrong"},
+            {error: "Something went wrong."},
             {status: 500}
         )
     }
