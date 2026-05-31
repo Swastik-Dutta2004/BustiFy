@@ -46,7 +46,7 @@ export async function GET(req:NextRequest) {
     }
 
     return NextResponse.json(
-        {error: "SOmething went wrong."},
+        {error: "Something went wrong."},
         {status: 500}
     )
 }
