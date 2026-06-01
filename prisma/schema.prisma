@@ -42,6 +42,8 @@ model Booking{
   pnr             String? @unique
   paymentStatus   String @default("PENDING")
 
+  razorpayOrderId  String?
+  razorpayPaymentId String?
 
   user            User  @relation(fields: [userId], references:  [id])
   bus             Bus   @relation(fields: [busId], references:   [id])
