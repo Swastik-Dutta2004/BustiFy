@@ -28,9 +28,9 @@ export default function LoginPage() {
       }
       localStorage.setItem("token", data.token);
       alert("Welcome back to BusTiFY.");
-      router.push("/"); 
+      router.push("/");
     } catch (error) {
-      console.error(error);   
+      console.error(error);
       alert("Something went wrong");
     } finally {
       setLoading(false);
@@ -40,55 +40,55 @@ export default function LoginPage() {
   return (
     <div className="min-h-[calc(100vh-9rem)] grid grid-cols-1 lg:grid-cols-2">
       {/* Left — editorial panel */}
-      <aside className="relative bg-ink text-paper overflow-hidden paper-grain p-8 md:p-14 flex flex-col justify-between min-h-[480px] lg:min-h-[calc(100vh-9rem)]">
+      <aside className="relative bg-ink text-paper overflow-hidden paper-grain p-6 md:p-10 flex flex-col justify-between min-h-[420px] lg:min-h-[calc(100vh-9rem)]">
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-10 h-10 rounded-md bg-tram text-ink grid place-items-center">
-              <Bus className="w-5 h-5" />
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-9 h-9 rounded-md bg-tram text-ink grid place-items-center">
+              <Bus className="w-4 h-4" />
             </div>
-            <span className="display text-2xl">
+            <span className="display text-xl">
               Bus<span className="italic">Ti</span>FY
             </span>
           </div>
 
-          <div className="flex items-center gap-3 mb-6">
-            <span className="route-num text-2xl text-tram">№ 02</span>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="route-num text-xl text-tram">№ 02</span>
             <span className="mono text-[10px] tracking-[0.3em] uppercase opacity-60">
               Sign in
             </span>
           </div>
 
-          <h1 className="display text-5xl md:text-7xl leading-[0.95] tracking-tight mb-6">
+          <h1 className="display text-4xl md:text-5xl xl:text-6xl leading-[0.95] tracking-tight mb-4">
             Welcome <br />
             <span className="italic font-light text-tram">back, traveller.</span>
           </h1>
 
-          <p className="text-paper/70 text-lg max-w-md leading-relaxed">
-            Pick up where you left off. Your tickets, saved routes, and recent journeys are
-            waiting on the dashboard.
+          <p className="text-paper/70 text-sm md:text-base max-w-md leading-relaxed">
+            Pick up where you left off. Your tickets, saved routes, and recent
+            journeys are waiting on the dashboard.
           </p>
         </div>
 
         {/* Faux ticket */}
-        <div className="relative z-10 max-w-sm mt-10">
-          <div className="bg-paper text-ink rounded-xl p-5 border border-paper/10 paper-grain">
-            <div className="relative z-10 flex items-center justify-between mb-4">
+        <div className="relative z-10 max-w-sm mt-6">
+          <div className="bg-paper text-ink rounded-xl p-4 border border-paper/10 paper-grain">
+            <div className="relative z-10 flex items-center justify-between mb-3">
               <div className="mono text-[10px] tracking-widest text-muted-foreground">
                 BUS<span className="text-tram">·</span>TIFY
               </div>
               <span className="stamp text-tram">Member</span>
             </div>
             <div className="relative z-10 flex items-center gap-4">
-              <div className="route-num text-4xl text-ink">412</div>
+              <div className="route-num text-3xl text-ink">412</div>
               <div className="flex-1">
                 <div className="text-sm font-medium">Routes unlocked</div>
                 <div className="mono text-[10px] tracking-widest text-muted-foreground">
                   Standard · AC · Tram
                 </div>
               </div>
-              <div className="route-num text-3xl text-tram">5%</div>
+              <div className="route-num text-2xl text-tram">5%</div>
             </div>
-            <div className="relative z-10 ticket-stitch my-4 h-px" />
+            <div className="relative z-10 ticket-stitch my-3 h-px" />
             <div className="relative z-10 mono text-[10px] tracking-widest text-muted-foreground flex items-center justify-between">
               <span>MEMBER · SINCE 2024</span>
               <span>•••• 24</span>
@@ -118,9 +118,9 @@ export default function LoginPage() {
       </aside>
 
       {/* Right — form */}
-      <section className="flex items-center justify-center p-8 md:p-14">
+      <section className="flex items-center justify-center p-6 md:p-10">
         <div className="w-full max-w-md">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-5">
             <span className="mono text-[10px] tracking-[0.3em] uppercase text-muted-foreground">
               Form · LOG-01
             </span>
@@ -132,20 +132,23 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          <h2 className="display text-4xl md:text-5xl leading-tight tracking-tight mb-2 text-ink">
+          <h2 className="display text-3xl md:text-4xl leading-tight tracking-tight mb-1 text-ink">
             Sign in.
           </h2>
-          <p className="text-muted-foreground text-sm mb-10">
+          <p className="text-muted-foreground text-xs mb-6">
             Use your registered email. New here?{" "}
-            <Link href="/signup" className="text-ink font-medium underline decoration-tram decoration-2 underline-offset-4">
+            <Link
+              href="/signup"
+              className="text-ink font-medium underline decoration-tram decoration-2 underline-offset-4"
+            >
               Create an account
             </Link>
             .
           </p>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="mono text-[10px] tracking-widest uppercase text-muted-foreground ml-1 block mb-2">
+              <label className="mono text-[10px] tracking-widest uppercase text-muted-foreground ml-1 block mb-1.5">
                 Email
               </label>
               <input
@@ -154,12 +157,12 @@ export default function LoginPage() {
                 placeholder="you@kolkata.in"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-transparent border-b-2 border-ink/20 focus:border-ink rounded-none px-1 py-3 text-base font-medium outline-none transition-colors placeholder:text-muted-foreground/50"
+                className="w-full bg-transparent border-b-2 border-ink/20 focus:border-ink rounded-none px-1 py-2.5 text-base font-medium outline-none transition-colors placeholder:text-muted-foreground/50"
               />
             </div>
 
             <div>
-              <label className="mono text-[10px] tracking-widest uppercase text-muted-foreground ml-1 block mb-2">
+              <label className="mono text-[10px] tracking-widest uppercase text-muted-foreground ml-1 block mb-1.5">
                 Password
               </label>
               <input
@@ -168,11 +171,11 @@ export default function LoginPage() {
                 placeholder="••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-transparent border-b-2 border-ink/20 focus:border-ink rounded-none px-1 py-3 text-base font-medium outline-none transition-colors placeholder:text-muted-foreground/50"
+                className="w-full bg-transparent border-b-2 border-ink/20 focus:border-ink rounded-none px-1 py-2.5 text-base font-medium outline-none transition-colors placeholder:text-muted-foreground/50"
               />
             </div>
 
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex items-center justify-between pt-1">
               <label className="flex items-center gap-2 cursor-pointer group">
                 <span
                   className={`w-4 h-4 rounded-sm border-2 grid place-items-center transition-colors ${
@@ -197,9 +200,9 @@ export default function LoginPage() {
                   checked={keepSigned}
                   onChange={(e) => setKeepSigned(e.target.checked)}
                 />
-                <span className="text-sm text-ink">Keep me signed in</span>
+                <span className="text-xs text-ink">Keep me signed in</span>
               </label>
-              <a href="#" className="text-sm text-muted-foreground hover:text-ink">
+              <a href="#" className="text-xs text-muted-foreground hover:text-ink">
                 Forgot password?
               </a>
             </div>
@@ -207,14 +210,14 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group w-full bg-ink text-paper py-4 rounded-full font-medium flex items-center justify-center gap-2 hover:bg-tram hover:text-ink transition-colors duration-300 disabled:opacity-50"
+              className="group w-full bg-ink text-paper py-3.5 rounded-full font-medium flex items-center justify-center gap-2 hover:bg-tram hover:text-ink transition-colors duration-300 disabled:opacity-50"
             >
               {loading ? "Signing you in…" : "Continue to BusTiFY"}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </form>
 
-          <p className="mono text-[10px] tracking-widest uppercase text-muted-foreground mt-8 text-center">
+          <p className="mono text-[10px] tracking-widest uppercase text-muted-foreground mt-5 text-center">
             Protected by end-to-end encryption · WCAG 2.2 AA
           </p>
         </div>

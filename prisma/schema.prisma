@@ -27,8 +27,9 @@ model Bus{
   busName         String
   fromCity        String
   toCity          String
-  departureTime   String
-  arrivalTime     String
+  stops           String[]
+  departureTime   String?
+  arrivalTime     String?
   price           Int
   totalSeats      Int @default(40)
   bookings        Booking[]

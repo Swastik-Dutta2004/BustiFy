@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, ArrowRight, Bus, Check } from "lucide-react";
+import { ArrowRight, Bus } from "lucide-react";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -36,120 +36,116 @@ export default function SignupPage() {
     }
   }
 
-  const perqs = [
-    "Real-time tracking on 412 routes",
-    "₹50 off your first 3 tickets",
-    "Priority customer support",
-    "Saved routes & recent journeys",
-  ];
+  const strength =
+    password.length === 0 ? null : password.length < 6 ? "weak" : password.length < 10 ? "good" : "strong";
+  const strengthColor =
+    strength === "weak" ? "bg-red-500" : strength === "good" ? "bg-yellow-400" : "bg-tram";
+  const strengthWidth =
+    strength === "weak" ? "w-1/3" : strength === "good" ? "w-2/3" : "w-full";
 
   return (
-    <div className="min-h-[calc(100vh-9rem)] grid grid-cols-1 lg:grid-cols-2">
-      {/* Left — editorial panel */}
-      <aside className="relative bg-ink text-paper overflow-hidden paper-grain p-8 md:p-14 flex flex-col justify-between min-h-[480px] lg:min-h-[calc(100vh-9rem)]">
+    <div className="h-[calc(100vh-4rem)] grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] overflow-hidden">
+
+      {/* ── Left panel ─────────────────────────────────── */}
+      <aside className="relative hidden lg:flex flex-col justify-between bg-ink text-paper p-10 overflow-hidden paper-grain">
+
+        {/* Decorative route lines */}
+        <svg className="absolute inset-0 w-full h-full opacity-10 pointer-events-none" viewBox="0 0 500 700" preserveAspectRatio="none">
+          <path d="M-50 180 Q180 80 320 200 T600 120" stroke="oklch(0.82 0.135 78)" strokeWidth="1" fill="none" strokeDasharray="5 5"/>
+          <path d="M-50 380 Q200 280 380 360 T650 260" stroke="oklch(0.82 0.135 78)" strokeWidth="1" fill="none" strokeDasharray="5 5"/>
+          <path d="M-50 560 Q160 460 300 520 T600 440" stroke="oklch(0.82 0.135 78)" strokeWidth="1" fill="none" strokeDasharray="5 5"/>
+        </svg>
+
+        {/* Logo */}
+        <div className="relative z-10 flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded bg-tram text-ink grid place-items-center">
+            <Bus className="w-4 h-4" />
+          </div>
+          <span className="display text-xl tracking-tight">Bus<span className="italic font-light">Ti</span>FY</span>
+        </div>
+
+        {/* Hero copy */}
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-10 h-10 rounded-md bg-tram text-ink grid place-items-center">
-              <Bus className="w-5 h-5" />
-            </div>
-            <span className="display text-2xl">
-              Bus<span className="italic">Ti</span>FY
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3 mb-6">
-            <span className="route-num text-2xl text-tram">№ 03</span>
-            <span className="mono text-[10px] tracking-[0.3em] uppercase opacity-60">
-              New here
-            </span>
-          </div>
-
-          <h1 className="display text-5xl md:text-7xl leading-[0.95] tracking-tight mb-6">
-            Get your <br />
-            <span className="italic font-light text-tram">first ticket</span> <br />
-            on us.
+          <p className="mono text-[10px] tracking-[0.35em] uppercase text-tram mb-4">№ 03 · New Passenger</p>
+          <h1 className="display text-6xl xl:text-7xl leading-[0.9] tracking-tight mb-5">
+            Every<br/>
+            journey<br/>
+            <span className="italic font-light text-paper/40">starts</span><br/>
+            <span className="text-tram">here.</span>
           </h1>
-
-          <p className="text-paper/70 text-lg max-w-md leading-relaxed">
-            Join 1.2 million Kolkatans who book their daily commute the honest way. No spam,
-            no nonsense, no missed buses.
+          <p className="text-paper/50 text-sm leading-relaxed max-w-xs">
+            1.2 million Kolkatans. 412 routes. One honest booking platform.
           </p>
         </div>
 
-        <ul className="relative z-10 space-y-3 mt-10 max-w-md">
-          {perqs.map((p, i) => (
-            <li key={i} className="flex items-start gap-3">
-              <span className="w-6 h-6 rounded-full border border-tram grid place-items-center shrink-0 mt-0.5">
-                <Check className="w-3.5 h-3.5 text-tram" />
-              </span>
-              <span className="text-paper/85">{p}</span>
-            </li>
+        {/* Bottom stats strip */}
+        <div className="relative z-10 grid grid-cols-3 gap-4 pt-6 border-t border-paper/10">
+          {[["412", "Routes"], ["1.2M", "Riders"], ["₹50", "First ride off"]].map(([val, label]) => (
+            <div key={label}>
+              <div className="display text-2xl text-tram leading-none">{val}</div>
+              <div className="mono text-[9px] tracking-widest uppercase text-paper/40 mt-1">{label}</div>
+            </div>
           ))}
-        </ul>
-
-        <div className="absolute inset-0 pointer-events-none opacity-25">
-          <svg className="w-full h-full" viewBox="0 0 400 600" preserveAspectRatio="none">
-            <path
-              d="M -50 200 Q 150 100 250 200 T 500 100"
-              stroke="oklch(0.82 0.135 78)"
-              strokeWidth="1.5"
-              fill="none"
-              strokeDasharray="4 4"
-            />
-            <path
-              d="M -50 450 Q 200 350 350 400 T 500 320"
-              stroke="oklch(0.82 0.135 78)"
-              strokeWidth="1.5"
-              fill="none"
-              strokeDasharray="4 4"
-            />
-          </svg>
         </div>
       </aside>
 
-      {/* Right — form */}
-      <section className="flex items-center justify-center p-8 md:p-14">
-        <div className="w-full max-w-md">
+      {/* ── Right — form ───────────────────────────────── */}
+      <section className="flex flex-col justify-center px-6 md:px-14 lg:px-16 py-8 bg-paper overflow-y-auto">
+        <div className="w-full max-w-sm mx-auto">
+
+          {/* Top nav */}
           <div className="flex items-center justify-between mb-8">
-            <span className="mono text-[10px] tracking-[0.3em] uppercase text-muted-foreground">
-              Form · REG-01
+            <div className="flex items-center gap-2 lg:hidden">
+              <div className="w-7 h-7 rounded bg-ink text-paper grid place-items-center">
+                <Bus className="w-3.5 h-3.5" />
+              </div>
+              <span className="display text-base">Bus<span className="italic font-light">Ti</span>FY</span>
+            </div>
+            <span className="mono text-[9px] tracking-[0.3em] uppercase text-muted-foreground hidden lg:block">
+              REG · 01
             </span>
             <Link
               href="/login"
-              className="text-sm font-medium text-ink hover:text-tram transition-colors flex items-center gap-1.5"
+              className="mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-ink transition-colors flex items-center gap-1"
             >
-              Already a member? <ArrowUpRight className="w-3.5 h-3.5" />
+              Sign in <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
-          <h2 className="display text-4xl md:text-5xl leading-tight tracking-tight mb-2 text-ink">
-            Create account.
-          </h2>
-          <p className="text-muted-foreground text-sm mb-10">
-            Takes 30 seconds. We&apos;ll never share your data.{" "}
-            <Link href="/login" className="text-ink font-medium underline decoration-tram decoration-2 underline-offset-4">
-              Sign in instead
-            </Link>
-            .
-          </p>
+          {/* Heading */}
+          <div className="mb-7">
+            <h2 className="display text-4xl leading-[0.95] tracking-tight text-ink mb-1.5">
+              Create<br/>account.
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              30 seconds.{" "}
+              <Link href="/login" className="text-ink underline decoration-tram decoration-2 underline-offset-2">
+                Already have one?
+              </Link>
+            </p>
+          </div>
 
+          {/* Form */}
           <form onSubmit={handleSignup} className="space-y-5">
-            <div>
-              <label className="mono text-[10px] tracking-widest uppercase text-muted-foreground ml-1 block mb-2">
+
+            {/* Name */}
+            <div className="group">
+              <label className="mono text-[9px] tracking-[0.25em] uppercase text-muted-foreground block mb-1.5">
                 Full name
               </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Arnab Mukherjee"
+                placeholder="Arnab Mukherjee"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-transparent border-b-2 border-ink/20 focus:border-ink rounded-none px-1 py-3 text-base font-medium outline-none transition-colors placeholder:text-muted-foreground/50"
+                className="w-full bg-transparent border-b border-ink/20 group-focus-within:border-ink px-0 py-2 text-sm font-medium outline-none transition-colors placeholder:text-ink/20"
               />
             </div>
 
-            <div>
-              <label className="mono text-[10px] tracking-widest uppercase text-muted-foreground ml-1 block mb-2">
+            {/* Email */}
+            <div className="group">
+              <label className="mono text-[9px] tracking-[0.25em] uppercase text-muted-foreground block mb-1.5">
                 Email
               </label>
               <input
@@ -158,41 +154,51 @@ export default function SignupPage() {
                 placeholder="you@kolkata.in"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-transparent border-b-2 border-ink/20 focus:border-ink rounded-none px-1 py-3 text-base font-medium outline-none transition-colors placeholder:text-muted-foreground/50"
+                className="w-full bg-transparent border-b border-ink/20 group-focus-within:border-ink px-0 py-2 text-sm font-medium outline-none transition-colors placeholder:text-ink/20"
               />
             </div>
 
-            <div>
-              <label className="mono text-[10px] tracking-widest uppercase text-muted-foreground ml-1 block mb-2">
+            {/* Password */}
+            <div className="group">
+              <label className="mono text-[9px] tracking-[0.25em] uppercase text-muted-foreground block mb-1.5">
                 Password
               </label>
               <input
                 type="password"
                 required
                 minLength={6}
-                placeholder="At least 6 characters"
+                placeholder="Min. 6 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-transparent border-b-2 border-ink/20 focus:border-ink rounded-none px-1 py-3 text-base font-medium outline-none transition-colors placeholder:text-muted-foreground/50"
+                className="w-full bg-transparent border-b border-ink/20 group-focus-within:border-ink px-0 py-2 text-sm font-medium outline-none transition-colors placeholder:text-ink/20"
               />
-              <div className="mono text-[10px] tracking-widest uppercase text-muted-foreground mt-2">
-                Strength: {password.length < 6 ? "weak" : password.length < 10 ? "good" : "strong"}
+              {/* Strength bar */}
+              <div className="mt-1.5 h-0.5 w-full bg-ink/10 rounded-full overflow-hidden">
+                <div className={`h-full rounded-full transition-all duration-500 ${strengthWidth} ${strengthColor}`} />
               </div>
+              {strength && (
+                <p className="mono text-[9px] tracking-widest uppercase mt-1 text-muted-foreground">
+                  {strength}
+                </p>
+              )}
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="group w-full bg-ink text-paper py-4 rounded-full font-medium flex items-center justify-center gap-2 hover:bg-tram hover:text-ink transition-colors duration-300 disabled:opacity-50"
-            >
-              {loading ? "Creating your account…" : "Create my BusTiFY account"}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+            {/* Submit */}
+            <div className="pt-1">
+              <button
+                type="submit"
+                disabled={loading}
+                className="group w-full bg-ink text-paper py-3 rounded-full text-sm font-medium flex items-center justify-center gap-2 hover:bg-tram hover:text-ink transition-colors duration-300 disabled:opacity-50"
+              >
+                {loading ? "Creating…" : "Create account"}
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </button>
+            </div>
 
-            <p className="text-xs text-muted-foreground text-center mt-4">
+            <p className="text-[10px] text-muted-foreground/60 text-center">
               By continuing you agree to our{" "}
-              <a href="#" className="text-ink underline">Terms</a> and{" "}
-              <a href="#" className="text-ink underline">Privacy</a>.
+              <a href="#" className="text-ink/60 underline">Terms</a> &{" "}
+              <a href="#" className="text-ink/60 underline">Privacy</a>.
             </p>
           </form>
         </div>

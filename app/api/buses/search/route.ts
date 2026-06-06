@@ -13,13 +13,6 @@ export async function GET(req: NextRequest) {
             )
         }
 
-        const token = authHeader.split(" ")[1]
-
-        jwt.verify(
-            token,
-            process.env.JWT_SECRET!
-        )
-
         const from = req.nextUrl.searchParams.get("fromCity")
         const to = req.nextUrl.searchParams.get("toCity")
 
@@ -35,6 +28,7 @@ export async function GET(req: NextRequest) {
                 fromCity: from,
                 toCity: to
             }, select: {
+                id:true,
                 busName: true,
                 fromCity: true,
                 toCity: true
@@ -42,7 +36,7 @@ export async function GET(req: NextRequest) {
         })
 
         return NextResponse.json({
-            message: "Find successfully.",
+            message: "Found successfully.",
             buses
         })
     } catch (error) {
