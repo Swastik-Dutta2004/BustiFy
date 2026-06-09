@@ -1,0 +1,63 @@
+
+bardhaman
+["Bardhaman","Bardhaman Station"]
+
+baruipur
+["Baruipur","Baruipur Station"]
+
+belmuri
+["Belmuri","Belmuri Station"]
+
+bhagabanpur
+["Bhagabanpur","Bhagabanpur More"]
+
+birati
+["Birati More","Birati Station"]
+
+canning
+["Canning","Canning Station"]
+
+dankuni
+["Dankuni","Dankuni Station"]
+
+golabari
+["Golabari","Golabari More"]
+
+hasnabad
+["Hasnabad","Hasnabad Station"]
+
+liluah don bosco
+["Liluah ( Don Bosco)","Liluah (Don Bosco)"]
+
+madhabpur
+["Madhabpur","Madhabpur More"]
+
+namkhana
+["Namkhana","Namkhana Station"]
+
+polerhat
+["Polerhat","Polerhat more"]
+
+raichak
+["Raichak","Raichak More"]
+
+rathtala
+["Rathtala","Rathtala More"]
+
+santoshpur
+["Santoshpur","Santoshpur Station"]
+
+sarisha
+["Sarisha","Sarisha More"]
+
+sinthee
+["Sinthee","Sinthee More"]
+
+sodepur
+["Sodepur","Sodepur Station"]
+
+sonarpur
+["Sonarpur","Sonarpur Station"]
+
+tangra
+["Tangra","Tangra More"]

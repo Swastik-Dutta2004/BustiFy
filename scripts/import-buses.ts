@@ -1,7 +1,9 @@
 import { prisma } from "../lib/prisma";
 import { routes1 } from "../data/buses";
+import { STOP_ALIASES } from "../data/stopAliases";
 
 async function main() {
+  const buses = [];
   for (const route of routes1) {
     try {
       const parts = route.split(" : ");
@@ -26,28 +28,30 @@ async function main() {
         .split(" to ")
         .map((v) => v.trim());
 
-      const stops = stopsPart
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
+      const stops = [
+        ...new Set(
+          stopsPart
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+            .map((stop) => STOP_ALIASES[stop] ?? stop)
+        ),
+      ];
 
 
-      await prisma.bus.create({
-        data: {
-          busName: busName.trim(),
-          fromCity,
-          toCity,
-          stops,
-          departureTime: "",
-          arrivalTime: "",
-          price: 0,
-          totalSeats: 40,
-        },
+      buses.push({
+        busName: busName.trim(),
+        fromCity,
+        toCity,
+        stops,
+        departureTime: "",
+        arrivalTime: "",
+        price: 0,
+        totalSeats: 40,
       });
 
       console.log(`Imported ${busName}`);
 
-      console.log(`Imported ${busName}`);
     } catch (err) {
       console.error("Failed:", route);
 
@@ -58,6 +62,12 @@ async function main() {
       console.error(err);
     }
   }
+
+  await prisma.bus.createMany({
+    data: buses,
+  });
+
+  console.log(`Imported ${buses.length} buses`);
 }
 
 main()
