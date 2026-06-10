@@ -1,6 +1,7 @@
 import { prisma } from "../lib/prisma";
 import { routes1 } from "../data/buses";
 import { STOP_ALIASES } from "../data/stopAliases";
+import "dotenv/config";
 
 async function main() {
   const buses = [];
