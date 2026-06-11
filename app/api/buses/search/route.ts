@@ -27,11 +27,6 @@ export async function GET(req: NextRequest) {
             where: {
                 fromCity: from,
                 toCity: to
-            }, select: {
-                id:true,
-                busName: true,
-                fromCity: true,
-                toCity: true
             }
         })
 

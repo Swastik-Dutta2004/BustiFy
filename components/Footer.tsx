@@ -8,7 +8,7 @@ const footerLinks = {
     items: [
       { l: "Plan a journey", h: "/passengers" },
       { l: "All routes", h: "/passengers" },
-      { l: "My tickets", h: "/passengers/myticket" },
+      { l: "My tickets", h: "/passengers/mybookings" },
       { l: "Live board", h: "/passengers" },
     ],
   },

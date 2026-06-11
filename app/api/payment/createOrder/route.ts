@@ -16,8 +16,6 @@ export async function POST(req: NextRequest) {
         const booking = await prisma.booking.findUnique({
             where: {
                 id: body.bookingId
-            }, include: {
-                bus: true
             }
         })
 
@@ -36,8 +34,8 @@ export async function POST(req: NextRequest) {
         }
 
         const order = await razorpay.orders.create({
-            amount: booking.bus.price * 100,
-            currency: "INR",    
+            amount: booking.fare * 100,
+            currency: "INR",
             receipt: `booking_${booking.id}`
         })
 

@@ -17,27 +17,27 @@ model User {
 }
 
 model Bus {
-  id            Int       @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   busName       String
   fromCity      String
   toCity        String
   departureTime String?
   arrivalTime   String?
   price         Int
-  totalSeats    Int       @default(40)
+  totalSeats    Int      @default(40)
   stops         String[]
-  bookings      Booking[]
 }
 
 model Booking {
   id                Int     @id @default(autoincrement())
   userId            Int
-  busId             Int
-  seatId            Int
+  fromCity          String
+  toCity            String
+  fare              Int
   pnr               String? @unique
   paymentStatus     String  @default("PENDING")
   razorpayOrderId   String?
   razorpayPaymentId String?
-  bus               Bus     @relation(fields: [busId], references: [id])
-  user              User    @relation(fields: [userId], references: [id])
+
+  user User @relation(fields: [userId], references: [id])
 }

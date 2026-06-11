@@ -27,22 +27,9 @@ export async function GET(req:NextRequest) {
             )
         }
 
-        const bookings = await prisma.booking.findMany({
-            where: {
-                busId: busId
-            },
-            select:{
-                seatId: true
-            }
-        })
-
-        const bookingSeats = bookings.map(
-            (booking) => booking.seatId 
-        )
-
         return NextResponse.json({
             totalSeats: bus.totalSeats,
-            bookingSeats
+            bookingSeats: []
         })
 
     } catch (error) {

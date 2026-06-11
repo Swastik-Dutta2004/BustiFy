@@ -67,7 +67,7 @@ export default function BusCard({ bus, from, to }: { bus: Bus; from: string; to:
             </div>
           </div>
           <Link
-            href={`/passengers/buy-ticket?busId=${bus.id}`}
+            href={`/passengers/ticket?from=${from}&to=${to}`}
             className="bg-ink text-paper px-4 py-2 rounded-full text-sm font-medium hover:bg-tram hover:text-ink transition-colors flex items-center gap-1.5"
           >
             Book

@@ -61,3 +61,7 @@ sonarpur
 
 tangra
 ["Tangra","Tangra More"]
+
+
+
+fixed: 1. admin section 

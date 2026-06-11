@@ -8,8 +8,9 @@ import { Search, ArrowUpRight, Menu, X } from "lucide-react";
 const navItems = [
   { href: "/", label: "Home", code: "01" },
   { href: "/passengers", label: "Passengers", code: "02" },
-  { href: "/conductor", label: "Conductor", code: "03" },
-  { href: "/login", label: "Sign in", code: "04" },
+  { href: "/passengers/mybookings", label: "My Bookings", code: "03" },
+  { href: "/conductor", label: "Conductor", code: "04" },
+  { href: "/login", label: "Sign in", code: "05" },
 ];
 
 const Navbar = () => {

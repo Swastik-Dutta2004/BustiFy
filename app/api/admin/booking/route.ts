@@ -40,19 +40,10 @@ export async function  GET(req:NextRequest) {
                         name: true,
                         email: true
                     }
-                },
-
-                bus: {
-                    select: {
-                        id:true,
-                        busName: true,
-                        fromCity: true,
-                        toCity: true,
-                        departureTime: true,
-                        arrivalTime: true,
-                        price: true
-                    }
                 }
+            },
+            orderBy: {
+                id: "desc"
             }
         })
 

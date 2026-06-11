@@ -31,17 +31,7 @@ export async function GET(req:NextRequest) {
             )
         }
 
-        const buses = await prisma.bus.findMany({
-            include: {
-                bookings: {
-                    select: {
-                        id: true,
-                        userId: true,
-                        pnr: true
-                    }
-                }
-            }
-        })
+        const buses = await prisma.bus.findMany()
 
         return NextResponse.json(
             buses

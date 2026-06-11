@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowRight, Search as SearchIcon, MapPin, Users, ArrowUpRight, Bus, Clock, Loader2 } from "lucide-react"
+import { ArrowRight, Search as SearchIcon, MapPin, Users, ArrowUpRight, Bus, Clock, Loader2, Ticket } from "lucide-react"
 
 interface SearchResult {
   from: string
@@ -88,18 +88,10 @@ export default function PassengersPage() {
 
   const filteredBuses = buslist
 
-  const HandleBooking = (bus: Bus) => {
-    if (bus.seats === 0) {
-      alert("No seats are available right now.")
-      return
-    }
-    if (passengers > bus.seats) {
-      alert("Not enough seats available.")
-      return
-    }
-    const totalPrice = bus.price * passengers
+  const handleGenerateTicket = () => {
+    if (!searchedResult) return
     router.push(
-      `/passengers/myticket?busId=${bus.id}&from=${from}&to=${to}&date=${date}&passengers=${passengers}&price=${totalPrice}`
+      `/passengers/ticket?from=${encodeURIComponent(searchedResult.from)}&to=${encodeURIComponent(searchedResult.to)}`
     )
   }
 
@@ -326,6 +318,7 @@ export default function PassengersPage() {
                   </span>
                 </div>
               ) : filteredBuses.length > 0 ? (
+                <>
                 <div className="space-y-3">
                   {filteredBuses.map((bus) => (
                     <article
@@ -394,31 +387,37 @@ export default function PassengersPage() {
                           <div className="hidden md:block absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-paper rounded-full" />
                         </div>
 
-                        {/* Right stub — price + CTA */}
+                        {/* Right stub — price */}
                         <div className="col-span-12 md:col-span-3 p-4 md:p-5 bg-secondary/40 flex md:flex-col items-center md:items-end justify-between md:justify-center gap-3 md:gap-2 border-t md:border-t-0 md:border-l border-dashed border-ink/20">
                           <div className="md:text-right">
                             <div className="mono text-[10px] tracking-widest text-muted-foreground">
-                              From
+                              Fare from
                             </div>
                             <div className="display text-2xl text-ink leading-none">
                               ₹{bus.price}
                             </div>
                             <div className="mono text-[10px] tracking-widest text-muted-foreground mt-1">
-                              × {searchedResult.passengers} pax
+                              Route bus
                             </div>
                           </div>
-                          <button
-                            onClick={() => HandleBooking(bus)}
-                            className="bg-ink text-paper px-4 py-2 rounded-full text-xs font-medium hover:bg-tram hover:text-ink transition-colors flex items-center gap-1.5 group/btn"
-                          >
-                            Book
-                            <ArrowUpRight className="w-3 h-3 group-hover/btn:rotate-45 transition-transform" />
-                          </button>
                         </div>
                       </div>
                     </article>
                   ))}
                 </div>
+
+                  {/* Generate Ticket */}
+                  <div className="flex justify-center pt-6 pb-2">
+                    <button
+                      onClick={handleGenerateTicket}
+                      className="group relative bg-ink text-paper px-8 py-4 rounded-full font-medium hover:bg-tram hover:text-ink transition-all duration-300 flex items-center gap-3 text-base shadow-lg hover:shadow-tram/25"
+                    >
+                      <Ticket className="w-5 h-5" />
+                      <span>Generate Ticket</span>
+                      <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
+                    </button>
+                  </div>
+                </>
               ) : (
                 <div className="border-2 border-dashed border-border rounded-3xl p-12 text-center">
                   <Bus className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />

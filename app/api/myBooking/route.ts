@@ -26,10 +26,7 @@ export async function GET(req:NextRequest) {
         const bookings = await prisma.booking.findMany({
             where: {
                 userId: decode.userId
-            },
-            include: {
-                bus: true
-            }   
+            },  
         })
 
         return NextResponse.json(
