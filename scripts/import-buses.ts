@@ -5,28 +5,37 @@ import "dotenv/config";
 
 function parseRoute(route: string) {
   const parts = route.split(" : ");
-  const routeInfo = parts[0];
 
-  const viaMatch = routeInfo.match(/\[[\s]*via[\s]*:([^\]]*)\]/i);
+  if (parts.length < 2) return null;
+
+  const firstPart = parts[0];
+
+  // Extract [via: ...]
+  const viaMatch = firstPart.match(/\[[\s]*via[\s]*:([^\]]*)\]/i);
   if (!viaMatch) return null;
 
   const stopsPart = viaMatch[1].trim();
-  const beforeStops = routeInfo.slice(0, viaMatch.index).trim();
 
-  const toMatch = beforeStops.match(/\bto\b/i);
-  if (!toMatch) return null;
+  // Remove [via: ...]
+  const beforeVia = firstPart.slice(0, viaMatch.index).trim();
 
-  const destination = beforeStops.slice(toMatch.index! + 2).trim();
-  const originAndCode = beforeStops.slice(0, toMatch.index).trim();
+  // Split only on the FIRST colon
+  const colonIndex = beforeVia.indexOf(":");
+  if (colonIndex === -1) return null;
 
-  const busNameColon = originAndCode.lastIndexOf(":");
-  const busName = busNameColon >= 0
-    ? originAndCode.slice(0, busNameColon).trim()
-    : originAndCode;
+  const busName = beforeVia.slice(0, colonIndex).trim();
+  const routePart = beforeVia.slice(colonIndex + 1).trim();
 
-  const origin = busNameColon >= 0
-    ? originAndCode.slice(busNameColon + 1).trim()
-    : originAndCode;
+  // Split route into FROM and TO
+  const routeParts = routePart.split(/\s+to\s+/i);
+
+  if (routeParts.length !== 2) {
+    console.error("Invalid route:", route);
+    return null;
+  }
+
+  const origin = routeParts[0].trim();
+  const destination = routeParts[1].trim();
 
   const stops = [
     ...new Set(
@@ -38,11 +47,11 @@ function parseRoute(route: string) {
   ];
 
   return {
-    busName,
+    busName: busName,          // Don't canon() bus names
     fromCity: canon(origin),
     toCity: canon(destination),
-    stops
-  }
+    stops,
+  };
 }
 
 async function main() {
