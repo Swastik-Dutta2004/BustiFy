@@ -2,7 +2,18 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowRight, Search as SearchIcon, MapPin, Users, ArrowUpRight, Bus, Clock, Loader2, Ticket } from "lucide-react"
+import { ArrowRight, Search as SearchIcon, MapPin, Users, ArrowUpRight, Bus, Clock, Loader2, Ticket, MapIcon } from "lucide-react"
+import "leaflet/dist/leaflet.css"
+import dynamic from "next/dynamic"
+
+const BusRouteMap = dynamic(() => import("@/components/BusRouteMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-[420px] bg-card rounded-2xl border border-border">
+      <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+    </div>
+  ),
+})
 
 interface SearchResult {
   from: string
@@ -24,6 +35,7 @@ interface Bus {
   amenities: string[]
   fromCity: string
   toCity: string
+  stops: string[]
 }
 
 export default function PassengersPage() {
@@ -335,91 +347,113 @@ export default function PassengersPage() {
                 </div>
               ) : filteredBuses.length > 0 ? (
                 <>
-                  <div className="space-y-3">
-                    {filteredBuses.map((bus) => (
-                      <article
-                        key={bus.id}
-                        className="group relative bg-card border border-border rounded-2xl overflow-hidden hover:border-ink hover:shadow-xl transition-all"
-                      >
-                        <div className="grid grid-cols-12 items-stretch">
-                          {/* Route code — left stub */}
-                          <div className="col-span-12 md:col-span-2 bg-ink text-paper p-4 md:p-5 flex md:flex-col items-center md:items-start justify-between md:justify-center gap-3 relative">
-                            <div className="route-num text-4xl md:text-5xl text-tram leading-none">
-                              {String(bus.id).slice(-2).padStart(2, "0")}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Bus Cards */}
+                    <div className="lg:col-span-2 space-y-3">
+                      {filteredBuses.map((bus) => (
+                        <article
+                          key={bus.id}
+                          className="group relative bg-card border border-border rounded-2xl overflow-hidden hover:border-ink hover:shadow-xl transition-all"
+                        >
+                          <div className="grid grid-cols-12 items-stretch">
+                            {/* Route code — left stub */}
+                            <div className="col-span-12 md:col-span-2 bg-ink text-paper p-4 md:p-5 flex md:flex-col items-center md:items-start justify-between md:justify-center gap-3 relative">
+                              <div className="route-num text-4xl md:text-5xl text-tram leading-none">
+                                {String(bus.id).slice(-2).padStart(2, "0")}
+                              </div>
+                              <div className="md:mt-2">
+                                <div className="mono text-[9px] tracking-widest opacity-60">BUS</div>
+                                <div className="mono text-xs font-medium">
+                                  {bus.busName.slice(0, 10)}
+                                </div>
+                              </div>
+                              <div className="hidden md:block absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-paper rounded-full" />
                             </div>
-                            <div className="md:mt-2">
-                              <div className="mono text-[9px] tracking-widest opacity-60">BUS</div>
-                              <div className="mono text-xs font-medium">
-                                {bus.busName.slice(0, 10)}
+
+                            {/* Middle — info */}
+                            <div className="col-span-12 md:col-span-7 p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4 md:gap-6 relative">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1.5">
+                                  <span className="stamp text-tram border-tram">{bus.type}</span>
+                                  <span className="mono text-[10px] tracking-widest text-muted-foreground">
+                                    ★ {bus.rating} · {bus.seats} seats left
+                                  </span>
+                                </div>
+                                <h3 className="display text-xl text-ink mb-1 leading-tight">
+                                  {bus.busName}
+                                </h3>
+                                <p className="text-xs text-muted-foreground">
+                                  {bus.amenities?.join(" · ") || "WiFi · Water · Charging"}
+                                </p>
+                              </div>
+
+                              <div className="flex items-center gap-4 md:gap-5">
+                                <div className="text-center">
+                                  <div className="display text-xl text-ink leading-none">
+                                    {bus.departure}
+                                  </div>
+                                  <div className="mono text-[9px] tracking-widest text-muted-foreground mt-1">
+                                    DEPART
+                                  </div>
+                                </div>
+                                <div className="flex flex-col items-center">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-ink" />
+                                  <div className="w-px h-5 bg-border my-0.5" />
+                                  <div className="w-1.5 h-1.5 rounded-full bg-tram" />
+                                  <div className="mono text-[9px] tracking-widest text-muted-foreground mt-1">
+                                    {bus.duration || "—"}
+                                  </div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="display text-xl text-ink leading-none">
+                                    {bus.arrival}
+                                  </div>
+                                  <div className="mono text-[9px] tracking-widest text-muted-foreground mt-1">
+                                    ARRIVE
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="hidden md:block absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-paper rounded-full" />
+                            </div>
+
+                            {/* Right stub — price */}
+                            <div className="col-span-12 md:col-span-3 p-4 md:p-5 bg-secondary/40 flex md:flex-col items-center md:items-end justify-between md:justify-center gap-3 md:gap-2 border-t md:border-t-0 md:border-l border-dashed border-ink/20">
+                              <div className="md:text-right">
+                                <div className="mono text-[10px] tracking-widest text-muted-foreground">
+                                  Fare from
+                                </div>
+                                <div className="display text-2xl text-ink leading-none">
+                                  ₹{bus.price}
+                                </div>
+                                <div className="mono text-[10px] tracking-widest text-muted-foreground mt-1">
+                                  Route bus
+                                </div>
                               </div>
                             </div>
-                            <div className="hidden md:block absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-paper rounded-full" />
                           </div>
+                        </article>
+                      ))}
+                    </div>
 
-                          {/* Middle — info */}
-                          <div className="col-span-12 md:col-span-7 p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4 md:gap-6 relative">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1.5">
-                                <span className="stamp text-tram border-tram">{bus.type}</span>
-                                <span className="mono text-[10px] tracking-widest text-muted-foreground">
-                                  ★ {bus.rating} · {bus.seats} seats left
-                                </span>
-                              </div>
-                              <h3 className="display text-xl text-ink mb-1 leading-tight">
-                                {bus.busName}
-                              </h3>
-                              <p className="text-xs text-muted-foreground">
-                                {bus.amenities?.join(" · ") || "WiFi · Water · Charging"}
-                              </p>
-                            </div>
-
-                            <div className="flex items-center gap-4 md:gap-5">
-                              <div className="text-center">
-                                <div className="display text-xl text-ink leading-none">
-                                  {bus.departure}
-                                </div>
-                                <div className="mono text-[9px] tracking-widest text-muted-foreground mt-1">
-                                  DEPART
-                                </div>
-                              </div>
-                              <div className="flex flex-col items-center">
-                                <div className="w-1.5 h-1.5 rounded-full bg-ink" />
-                                <div className="w-px h-5 bg-border my-0.5" />
-                                <div className="w-1.5 h-1.5 rounded-full bg-tram" />
-                                <div className="mono text-[9px] tracking-widest text-muted-foreground mt-1">
-                                  {bus.duration || "—"}
-                                </div>
-                              </div>
-                              <div className="text-center">
-                                <div className="display text-xl text-ink leading-none">
-                                  {bus.arrival}
-                                </div>
-                                <div className="mono text-[9px] tracking-widest text-muted-foreground mt-1">
-                                  ARRIVE
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="hidden md:block absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-paper rounded-full" />
-                          </div>
-
-                          {/* Right stub — price */}
-                          <div className="col-span-12 md:col-span-3 p-4 md:p-5 bg-secondary/40 flex md:flex-col items-center md:items-end justify-between md:justify-center gap-3 md:gap-2 border-t md:border-t-0 md:border-l border-dashed border-ink/20">
-                            <div className="md:text-right">
-                              <div className="mono text-[10px] tracking-widest text-muted-foreground">
-                                Fare from
-                              </div>
-                              <div className="display text-2xl text-ink leading-none">
-                                ₹{bus.price}
-                              </div>
-                              <div className="mono text-[10px] tracking-widest text-muted-foreground mt-1">
-                                Route bus
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </article>
-                    ))}
+                    {/* Map */}
+                    <div className="lg:col-span-1 lg:sticky lg:top-6 lg:self-start">
+                      <div className="flex items-center gap-2 mb-3">
+                        <MapIcon className="w-4 h-4 text-tram" />
+                        <span className="mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                          Route Map
+                        </span>
+                      </div>
+                      <BusRouteMap
+                        routes={filteredBuses.map((b) => ({
+                          id: b.id,
+                          busName: b.busName,
+                          fromCity: b.fromCity,
+                          toCity: b.toCity,
+                          stops: b.stops ?? [b.fromCity, b.toCity],
+                        }))}
+                      />
+                    </div>
                   </div>
 
                   {/* Generate Ticket */}
