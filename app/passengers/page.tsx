@@ -91,7 +91,30 @@ export default function PassengersPage() {
         throw new Error(message);
       }
       const data = await res.json()
-      setBuslist(data.validBuses ?? data.buses ?? [])
+      const rawBuses: any[] = data.validBuses ?? data.buses ?? []
+      const mapped = rawBuses.map((b: any) => ({
+        id: b.id,
+        busName: b.busName,
+        type: b.type || "Standard",
+        departure: b.departureTime || "",
+        arrival: b.arrivalTime || "",
+        duration: (() => {
+          if (!b.departureTime || !b.arrivalTime) return ""
+          const [dh, dm] = b.departureTime.split(":").map(Number)
+          const [ah, am] = b.arrivalTime.split(":").map(Number)
+          let diff = (ah * 60 + am) - (dh * 60 + dm)
+          if (diff < 0) diff += 1440
+          return `${Math.floor(diff / 60)}h ${diff % 60}m`
+        })(),
+        seats: b.totalSeats ?? b.seats ?? 0,
+        price: b.price,
+        rating: b.rating ?? 4.0,
+        amenities: b.amenities ?? [],
+        fromCity: b.fromCity,
+        toCity: b.toCity,
+        stops: b.stops ?? [],
+      }))
+      setBuslist(mapped)
     } catch (err) {
       console.error(err)
       setError(err instanceof Error ? err.message : "Failed to fetch buses")
@@ -117,11 +140,22 @@ export default function PassengersPage() {
 
   const filteredBuses = buslist
 
+  const [selectedBusForPayment, setSelectedBusForPayment] = useState<Bus | null>(null)
+
   const handleGenerateTicket = () => {
     if (!searchedResult) return
-    router.push(
-      `/passengers/ticket?from=${encodeURIComponent(searchedResult.from)}&to=${encodeURIComponent(searchedResult.to)}`
-    )
+    const bus = selectedBusForPayment
+    const query = new URLSearchParams({
+      from: searchedResult.from,
+      to: searchedResult.to,
+    })
+    if (bus) {
+      query.set("bus", bus.busName)
+      query.set("departure", bus.departure)
+      query.set("arrival", bus.arrival)
+      query.set("duration", bus.duration)
+    }
+    router.push(`/passengers/payment?${query.toString()}`)
   }
 
   return (
@@ -417,7 +451,7 @@ export default function PassengersPage() {
                               <div className="hidden md:block absolute -right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 bg-paper rounded-full" />
                             </div>
 
-                            {/* Right stub — price */}
+                            {/* Right stub — price + select */}
                             <div className="col-span-12 md:col-span-3 p-4 md:p-5 bg-secondary/40 flex md:flex-col items-center md:items-end justify-between md:justify-center gap-3 md:gap-2 border-t md:border-t-0 md:border-l border-dashed border-ink/20">
                               <div className="md:text-right">
                                 <div className="mono text-[10px] tracking-widest text-muted-foreground">
@@ -430,6 +464,16 @@ export default function PassengersPage() {
                                   Route bus
                                 </div>
                               </div>
+                              <button
+                                onClick={() => setSelectedBusForPayment(bus)}
+                                className={`w-full md:w-auto mt-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+                                  selectedBusForPayment?.id === bus.id
+                                    ? "bg-tram text-ink"
+                                    : "bg-ink text-paper hover:bg-tram hover:text-ink"
+                                }`}
+                              >
+                                {selectedBusForPayment?.id === bus.id ? "Selected" : "Select"}
+                              </button>
                             </div>
                           </div>
                         </article>
@@ -460,10 +504,11 @@ export default function PassengersPage() {
                   <div className="flex justify-center pt-6 pb-2">
                     <button
                       onClick={handleGenerateTicket}
-                      className="group relative bg-ink text-paper px-8 py-4 rounded-full font-medium hover:bg-tram hover:text-ink transition-all duration-300 flex items-center gap-3 text-base shadow-lg hover:shadow-tram/25"
+                      disabled={!selectedBusForPayment}
+                      className="group relative bg-ink text-paper px-8 py-4 rounded-full font-medium hover:bg-tram hover:text-ink transition-all duration-300 flex items-center gap-3 text-base shadow-lg hover:shadow-tram/25 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-ink disabled:hover:text-paper"
                     >
                       <Ticket className="w-5 h-5" />
-                      <span>Generate Ticket</span>
+                      <span>{selectedBusForPayment ? `Pay for ${selectedBusForPayment.busName}` : "Select a bus first"}</span>
                       <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform" />
                     </button>
                   </div>

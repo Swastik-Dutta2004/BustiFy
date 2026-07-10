@@ -19,7 +19,7 @@
 
             const body = await req.json();
 
-            if (!body.fromCity || !body.toCity || !body.fare) {
+            if (!body.fromCity || !body.toCity || body.fare == null) {
                 return NextResponse.json({
                     error: "From, To and Fare are required"
                 }, { status: 400 });
