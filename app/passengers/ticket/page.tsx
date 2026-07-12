@@ -8,6 +8,8 @@ import {
   Loader2, ArrowRight, Route, Ruler, IndianRupee,
   AlertCircle, CheckCircle2, Calendar
 } from "lucide-react"
+import { calculateRouteDistance } from "@/lib/distance"
+import { calculateFare } from "@/lib/fare"
 
 interface BusData {
   id: number
@@ -34,6 +36,7 @@ function TicketPageContent() {
   const [paying, setPaying] = useState(false)
   const [paid, setPaid] = useState(false)
   const [pnr, setPnr] = useState("")
+  const [selectedBusName, setSelectedBusName] = useState("")
 
   const today = new Date().toLocaleDateString("en-IN", {
     day: "numeric", month: "short", year: "numeric",
@@ -97,10 +100,15 @@ function TicketPageContent() {
           betweenStops = stops
         }
         setStopsCount(betweenStops.length)
-        setDistance(Math.max(Math.round(betweenStops.length * 1.5), 2))
 
-        const minPrice = Math.min(...busList.map((b: BusData) => b.price))
-        setFare(minPrice)
+        const routeStops = fromIdx !== -1 && toIdx !== -1 && fromIdx < toIdx
+          ? stops.slice(fromIdx, toIdx + 1)
+          : stops
+        const routeDistance = calculateRouteDistance(routeStops)
+        setDistance(routeDistance || Math.max(Math.round(betweenStops.length * 1.5), 2))
+
+        setSelectedBusName(busList[0].busName)
+        setFare(calculateFare(routeDistance || Math.max(Math.round(betweenStops.length * 1.5), 2)))
       } catch (err) {
         setError("Something went wrong. Please try again.")
         console.error(err)
@@ -128,7 +136,7 @@ function TicketPageContent() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ fromCity: from, toCity: to, fare }),
+        body: JSON.stringify({ fromCity: from, toCity: to, busName: selectedBusName }),
       })
 
       if (!bookingRes.ok) {
@@ -142,8 +150,10 @@ function TicketPageContent() {
       }
       const bid = bookingData.booking.id
       const generatedPnr = bookingData.booking.pnr
+      const serverFare = bookingData.booking.fare
       setBookingId(bid)
       setPnr(generatedPnr)
+      setFare(serverFare)
 
       const orderRes = await fetch("/api/payment/createOrder", {
         method: "POST",

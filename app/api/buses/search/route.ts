@@ -63,8 +63,6 @@ export async function GET(req: NextRequest) {
                 ],
             },
         });
-
-        console.log(buses);
         
         const validBuses = buses.filter((bus) => {
             const fromIndex = bus.stops.indexOf(from);

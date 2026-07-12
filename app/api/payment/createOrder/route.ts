@@ -39,6 +39,9 @@ export async function POST(req: NextRequest) {
             receipt: `booking_${booking.id}`
         })
 
+        console.log(booking.fare);
+        
+        
         await prisma.booking.update({
             where: {
                 id: booking.id

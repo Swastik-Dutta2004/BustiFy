@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
                 { status: 400 }
             )
         }
-
+        
         const booking = await prisma.booking.findFirst({
             where: {
                 razorpayOrderId: razorpay_order_id

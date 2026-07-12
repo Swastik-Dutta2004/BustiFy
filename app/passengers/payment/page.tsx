@@ -9,7 +9,8 @@ import {
   AlertCircle, CheckCircle2, Calendar, CreditCard, Lock,
   CircleDot, Sparkles
 } from "lucide-react"
-import { getCoordinates } from "@/lib/coordinates"
+import { calculateRouteDistance } from "@/lib/distance"
+import { calculateFare } from "@/lib/fare"
 
 interface BusData {
   id: number
@@ -111,23 +112,13 @@ function PaymentPageContent() {
         }
         setStopsCount(betweenStops.length)
 
-        const fromCoords = getCoordinates(from)
-        const toCoords = getCoordinates(to)
-        let routeDistance = 0
-        if (fromCoords && toCoords) {
-          const R = 6371
-          const dLat = ((toCoords.lat - fromCoords.lat) * Math.PI) / 180
-          const dLng = ((toCoords.lng - fromCoords.lng) * Math.PI) / 180
-          const a =
-            Math.sin(dLat / 2) ** 2 +
-            Math.cos((fromCoords.lat * Math.PI) / 180) *
-              Math.cos((toCoords.lat * Math.PI) / 180) *
-              Math.sin(dLng / 2) ** 2
-          routeDistance = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)))
-        }
+        const routeStops = fromIdx !== -1 && toIdx !== -1 && fromIdx < toIdx
+          ? stops.slice(fromIdx, toIdx + 1)
+          : stops
+        const routeDistance = calculateRouteDistance(routeStops)
         setDistance(routeDistance || Math.max(Math.round(betweenStops.length * 1.5), 2))
 
-        setFare(selectedBus.price)
+        setFare(calculateFare(routeDistance || Math.max(Math.round(betweenStops.length * 1.5), 2)))
       } catch (err) {
         setError("Something went wrong. Please try again.")
         console.error(err)
@@ -156,7 +147,7 @@ function PaymentPageContent() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ fromCity: from, toCity: to, fare }),
+        body: JSON.stringify({ fromCity: from, toCity: to, busName }),
       })
 
       if (!bookingRes.ok) {
@@ -170,8 +161,10 @@ function PaymentPageContent() {
       }
       const bid = bookingData.booking.id
       const generatedPnr = bookingData.booking.pnr
+      const serverFare = bookingData.booking.fare
       setBookingId(bid)
       setPnr(generatedPnr)
+      setFare(serverFare)
 
       const orderRes = await fetch("/api/payment/createOrder", {
         method: "POST",
