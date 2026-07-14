@@ -51,10 +51,6 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        console.log("Searching from:", from);
-        console.log("Searching to:", to);
-
-
         const buses = await prisma.bus.findMany({
             where: {
                 AND: [
@@ -76,8 +72,12 @@ export async function GET(req: NextRequest) {
 
         const validBuses = buses.filter((bus) => {
             const allStops = [bus.fromCity, ...bus.stops, bus.toCity];
-            const fromIndex = allStops.indexOf(from);
-            const toIndex = allStops.indexOf(to);
+            const fromIndex = allStops.findIndex(
+                (s) => s.toLowerCase() === from.toLowerCase()
+            );
+            const toIndex = allStops.findIndex(
+                (s) => s.toLowerCase() === to.toLowerCase()
+            );
 
             return fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex;
         });
@@ -90,10 +90,9 @@ export async function GET(req: NextRequest) {
         if (error instanceof jwt.JsonWebTokenError) {
             return NextResponse.json(
                 { error: "Invalid token." },
-                { status: 403 }
+                { status: 401 }
             );
         }
-        console.error(error);
         return NextResponse.json(
             { error: "Something went wrong." },
             { status: 500 }

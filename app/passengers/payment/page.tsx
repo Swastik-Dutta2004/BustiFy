@@ -141,34 +141,43 @@ function PaymentPageContent() {
     setStep("processing")
 
     try {
-      const bookingRes = await fetch("/api/booking", {
+      let bid = bookingId
+      let generatedPnr = pnr
+      let serverFare = fare
+
+      if (!bid) {
+        const bookingRes = await fetch("/api/booking", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ fromCity: from, toCity: to, busName }),
+        })
+
+        if (!bookingRes.ok) {
+          const err = await bookingRes.json()
+          throw new Error(err.error || "Failed to create booking")
+        }
+
+        const bookingData = await bookingRes.json()
+        if (!bookingData.booking) {
+          throw new Error(bookingData.error || "Failed to create booking")
+        }
+        bid = bookingData.booking.id
+        generatedPnr = bookingData.booking.pnr
+        serverFare = bookingData.booking.fare
+        setBookingId(bid)
+        setPnr(generatedPnr)
+        setFare(serverFare)
+      }
+
+      const orderRes = await fetch("/api/payment/createOrder", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ fromCity: from, toCity: to, busName }),
-      })
-
-      if (!bookingRes.ok) {
-        const err = await bookingRes.json()
-        throw new Error(err.error || "Failed to create booking")
-      }
-
-      const bookingData = await bookingRes.json()
-      if (!bookingData.booking) {
-        throw new Error(bookingData.error || "Failed to create booking")
-      }
-      const bid = bookingData.booking.id
-      const generatedPnr = bookingData.booking.pnr
-      const serverFare = bookingData.booking.fare
-      setBookingId(bid)
-      setPnr(generatedPnr)
-      setFare(serverFare)
-
-      const orderRes = await fetch("/api/payment/createOrder", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bookingId: bid }),
       })
 
@@ -194,7 +203,10 @@ function PaymentPageContent() {
           try {
             const verifyRes = await fetch("/api/payment/verify", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
               body: JSON.stringify({
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
@@ -209,22 +221,12 @@ function PaymentPageContent() {
                 router.push("/passengers/mybookings")
               }, 2500)
             } else {
-              throw new Error("Payment verification failed")
-            }
-          } catch {
-            try {
-              await fetch(`/api/payment/success/${bid}`, {
-                method: "PATCH",
-              })
-              setPaid(true)
-              setStep("success")
-              setTimeout(() => {
-                router.push("/passengers/mybookings")
-              }, 2500)
-            } catch {
               setStep("failed")
               setPaying(false)
             }
+          } catch {
+            setStep("failed")
+            setPaying(false)
           }
         },
         modal: {

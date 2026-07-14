@@ -74,14 +74,12 @@ export async function POST(req: Request) {
         })
 
     } catch (error) {
-        if (error instanceof jwt.JsonWebTokenError) {
-            console.log("JWT verification failed:", error.message);
-            return NextResponse.json({ error: "Invalid Token: " + error.message }, { status: 401 });
-        }
         if (error instanceof jwt.TokenExpiredError) {
             return NextResponse.json({ error: "Token expired" }, { status: 401 });
         }
-        console.log("OTHER ERROR:", error);
+        if (error instanceof jwt.JsonWebTokenError) {
+            return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+        }
         return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
 
     }

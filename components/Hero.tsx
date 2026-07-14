@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowUpRight, MapPin, Clock, Users, ArrowRight } from "lucide-react";
 
 const liveBoard = [
@@ -12,6 +12,16 @@ const liveBoard = [
 ];
 
 const Hero = () => {
+  const [time, setTime] = useState("--:--")
+
+  useEffect(() => {
+    setTime(new Date().toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }))
+  }, [])
+
   return (
     <section className="relative pt-10 md:pt-16 pb-16 md:pb-24 px-5 md:px-10">
       <div className="mx-auto max-w-[1400px] grid grid-cols-12 gap-x-8 gap-y-10">
@@ -86,11 +96,7 @@ const Hero = () => {
                 </span>
               </div>
               <span className="mono text-[10px] tracking-widest text-paper/60">
-                {new Date().toLocaleTimeString("en-IN", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: false,
-                })}
+                {time}
               </span>
             </div>
 
