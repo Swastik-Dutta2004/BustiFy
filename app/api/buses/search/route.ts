@@ -58,15 +58,26 @@ export async function GET(req: NextRequest) {
         const buses = await prisma.bus.findMany({
             where: {
                 AND: [
-                    { stops: { has: from } },
-                    { stops: { has: to } },
+                    {
+                        OR: [
+                            { fromCity: from },
+                            { stops: { has: from } },
+                        ],
+                    },
+                    {
+                        OR: [
+                            { toCity: to },
+                            { stops: { has: to } },
+                        ],
+                    },
                 ],
             },
         });
-        
+
         const validBuses = buses.filter((bus) => {
-            const fromIndex = bus.stops.indexOf(from);
-            const toIndex = bus.stops.indexOf(to);
+            const allStops = [bus.fromCity, ...bus.stops, bus.toCity];
+            const fromIndex = allStops.indexOf(from);
+            const toIndex = allStops.indexOf(to);
 
             return fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex;
         });
