@@ -1,12 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Bus } from "lucide-react";
+import { ArrowRight, Bus, Loader2 } from "lucide-react";
 
 export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[60vh] gap-3 text-muted-foreground">
+        <Loader2 className="w-5 h-5 animate-spin" />
+        <span className="mono text-[10px] tracking-widest uppercase">Loading…</span>
+      </div>
+    }>
+      <SignupForm />
+    </Suspense>
+  );
+}
+
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("from") || "/";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,8 +41,7 @@ export default function SignupPage() {
         alert(data.error);
         return;
       }
-      alert("Welcome to BusTiFY. Your first ticket is on us.");
-      router.push("/login");
+      router.push(`/login?from=${encodeURIComponent(returnTo)}`);
     } catch (error) {
       console.log(error);
       alert("Something went wrong");
@@ -105,7 +119,7 @@ export default function SignupPage() {
               REG · 01
             </span>
             <Link
-              href="/login"
+              href={`/login?from=${encodeURIComponent(returnTo)}`}
               className="mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-ink transition-colors flex items-center gap-1"
             >
               Sign in <ArrowRight className="w-3 h-3" />
@@ -119,7 +133,7 @@ export default function SignupPage() {
             </h2>
             <p className="text-xs text-muted-foreground">
               30 seconds.{" "}
-              <Link href="/login" className="text-ink underline decoration-tram decoration-2 underline-offset-2">
+              <Link href={`/login?from=${encodeURIComponent(returnTo)}`} className="text-ink underline decoration-tram decoration-2 underline-offset-2">
                 Already have one?
               </Link>
             </p>

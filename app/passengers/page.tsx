@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowRight, Search as SearchIcon, MapPin, Users, ArrowUpRight, Bus, Clock, Loader2, Ticket, MapIcon, ChevronDown, X } from "lucide-react"
+import { ArrowRight, Search as SearchIcon, MapPin, Users, ArrowUpRight, Bus, Clock, Loader2, Ticket, MapIcon, ChevronDown, X, Lock } from "lucide-react"
+import { useAuth } from "@/components/AuthProvider"
 import "leaflet/dist/leaflet.css"
 import dynamic from "next/dynamic"
 
@@ -47,6 +48,7 @@ interface CityOption {
 }
 
 export default function PassengersPage() {
+  const { isAuthenticated } = useAuth()
   const [from, setFrom] = useState("")
   const [to, setTo] = useState("")
   const [date, setDate] = useState("")
@@ -59,6 +61,7 @@ export default function PassengersPage() {
   const [loading, setLoading] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<"from" | "to" | null>(null)
   const [filterText, setFilterText] = useState("")
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -217,6 +220,10 @@ export default function PassengersPage() {
 
   const handleGenerateTicket = () => {
     if (!searchedResult) return
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true)
+      return
+    }
     const bus = selectedBusForPayment
     const query = new URLSearchParams({
       from: searchedResult.from,
@@ -758,6 +765,45 @@ export default function PassengersPage() {
           )}
         </div>
       </section>
+
+      {/* Login Required Prompt */}
+      {showLoginPrompt && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/40 backdrop-blur-sm px-5">
+          <div className="bg-card rounded-3xl shadow-2xl border border-ink/15 max-w-md w-full p-7 text-center relative">
+            <button
+              onClick={() => setShowLoginPrompt(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-secondary grid place-items-center text-muted-foreground hover:text-ink transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-ink text-paper grid place-items-center mb-5">
+              <Lock className="w-6 h-6" />
+            </div>
+
+            <h3 className="display text-xl text-ink mb-2">Please log in to continue</h3>
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+              You need an account to book tickets. Your search results and selected bus will be waiting for you after login.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a
+                href={`/login?from=${encodeURIComponent("/passengers" + (searchedResult ? `?from=${searchedResult.from}&to=${searchedResult.to}` : ""))}`}
+                className="flex-1 bg-ink text-paper py-3 rounded-full font-medium text-sm flex items-center justify-center gap-2 hover:bg-tram hover:text-ink transition-all duration-300"
+              >
+                Log in
+                <ArrowRight className="w-4 h-4" />
+              </a>
+              <a
+                href={`/signup?from=${encodeURIComponent("/passengers" + (searchedResult ? `?from=${searchedResult.from}&to=${searchedResult.to}` : ""))}`}
+                className="flex-1 border border-ink/20 text-ink py-3 rounded-full font-medium text-sm flex items-center justify-center gap-2 hover:border-ink hover:bg-ink hover:text-paper transition-all duration-300"
+              >
+                Create account
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

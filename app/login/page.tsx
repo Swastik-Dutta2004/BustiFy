@@ -1,12 +1,29 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, ArrowRight, Bus } from "lucide-react";
+import { ArrowUpRight, ArrowRight, Bus, Loader2 } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[60vh] gap-3 text-muted-foreground">
+        <Loader2 className="w-5 h-5 animate-spin" />
+        <span className="mono text-[10px] tracking-widest uppercase">Loading…</span>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("from") || "/";
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,9 +43,8 @@ export default function LoginPage() {
         alert(data.message);
         return;
       }
-      localStorage.setItem("token", data.token);
-      alert("Welcome back to BusTiFY.");
-      router.push("/");
+      login(data.token);
+      router.push(returnTo);
     } catch (error) {
       console.error(error);
       alert("Something went wrong");
@@ -125,7 +141,7 @@ export default function LoginPage() {
               Form · LOG-01
             </span>
             <Link
-              href="/signup"
+              href={`/signup?from=${encodeURIComponent(returnTo)}`}
               className="text-sm font-medium text-ink hover:text-tram transition-colors flex items-center gap-1.5"
             >
               Need an account? <ArrowUpRight className="w-3.5 h-3.5" />
@@ -138,7 +154,7 @@ export default function LoginPage() {
           <p className="text-muted-foreground text-xs mb-6">
             Use your registered email. New here?{" "}
             <Link
-              href="/signup"
+              href={`/signup?from=${encodeURIComponent(returnTo)}`}
               className="text-ink font-medium underline decoration-tram decoration-2 underline-offset-4"
             >
               Create an account

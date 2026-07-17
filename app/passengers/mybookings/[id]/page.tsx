@@ -6,6 +6,7 @@ import {
   Ticket, MapPin, Bus, Calendar, Clock, IndianRupee,
   Loader2, ArrowLeft, CheckCircle2, XCircle, Printer, Download
 } from "lucide-react"
+import ProtectRoute from "@/components/ProtectRoute"
 
 interface Booking {
   id: number
@@ -19,6 +20,14 @@ interface Booking {
 }
 
 export default function BookingDetailsPage() {
+  return (
+    <ProtectRoute>
+      <BookingDetailsContent />
+    </ProtectRoute>
+  )
+}
+
+function BookingDetailsContent() {
   const params = useParams()
   const router = useRouter()
   const [booking, setBooking] = useState<Booking | null>(null)
@@ -35,10 +44,6 @@ export default function BookingDetailsPage() {
   useEffect(() => {
     async function fetchBooking() {
       const token = localStorage.getItem("token")
-      if (!token) {
-        router.push("/login")
-        return
-      }
 
       try {
         const res = await fetch(`/api/booking/${params.id}`, {
